@@ -1,0 +1,103 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+
+<dom-module id="todo-element">
+  <template>
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      .title {
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        line-height: 1.2;
+        align-items: center;
+      }
+
+      paper-input {
+        @apply(--layout-flex);
+      }
+
+      .buttons {
+        min-width: 0;
+      }
+
+      :host([checked]) .title {
+        text-decoration: line-through;
+      }
+    </style>
+      <paper-button class="buttons" on-tap="_onCheck">
+        <iron-icon icon="{{_computeCheckIcon(checked)}}"></iron-icon>
+      </paper-button>
+      <div class="title" hidden$=[[_edit]] on-tap="_toggleEdit">
+        <content></content>
+      </div>
+      <paper-input hidden$=[[!_edit]] id="input" label="Name" on-blur="_leaveEdit" on-keydown="_checkForEnter"></paper-input>
+      <paper-button class="buttons" on-tap="_onDelete">
+        <iron-icon icon="close"></iron-icon>
+      </paper-button>
+  </template>
+  <script>
+  Polymer({
+      is: 'todo-element',
+
+      properties: {
+        checked: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        _edit: {
+          type: Boolean,
+          value: false,
+          observer: '_editChanged'
+        }
+      },
+      
+      _computeCheckIcon: function(c) {
+        return c ? 'check-box' : 'check-box-outline-blank';
+      },
+
+      _onCheck: function() {
+        this.fire('check');
+      },
+
+      _onDelete: function() {
+        this.fire('delete');
+      },
+
+      _editChanged: function(e) {
+        if (e) {
+          this.$.input.value = Polymer.dom(this).textContent;
+          this.$.input.focus();
+        }
+      },
+
+      _leaveEdit: function() {
+        this.fire('edit', {
+          'value': this.$.input.value
+        })
+        this._toggleEdit();
+      },
+
+      _checkForEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.$.input.blur();
+        }
+      },
+
+      _toggleEdit: function() {
+        this._edit = !this._edit;
+      }
+    });
+  </script>
+</dom-module>
