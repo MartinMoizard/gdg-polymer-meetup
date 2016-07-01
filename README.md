@@ -11,7 +11,7 @@ I gave a talk at the Paris GDG meetup to show how cool Polymer is, and that you 
 Meetup slides
 -------------
 
-To come...
+http://slides.com/rtbi-frontend/polymer-primer-gdg-20160630
 
 How to run it
 -------------
